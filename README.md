@@ -4,6 +4,8 @@
 
 Kubernetes cloud execution for Python functions. Decorate with `@ascend`, run, done.
 
+Blog post : [https://ocramz.github.io/posts/2026-03-05-ascend.html](https://ocramz.github.io/posts/2026-03-05-ascend.html)
+
 ## Use cases
 - **Machine Learning**: Train models on GPU nodes without leaving your notebook, run hyperparameter searches in parallel
 - **Data Processing**: Run intensive data transformations on compute- or memory-optimized nodes
@@ -21,6 +23,8 @@ def train_model(data, epochs=10):
 
 result = train_model(my_data, epochs=20)  # runs on AKS
 ```
+
+See the [examples/](examples/) directory for some worked out use cases, e.g. hyperparameter search: [examples/optuna_xgboost.py](examples/optuna_xgboost.py).
 
 ## Quick Start
 
@@ -49,20 +53,6 @@ This writes a `.ascend.yaml` config. You're ready to use `@ascend`.
 | `project` | `bool` | `False` | Run in shared project namespace (Git repo name) |
 | `git_check` | `bool` | `None` | Validate clean Git tree (`None` defers to config) |
 
-## GPU Example
-
-```python
-@ascend(node_type="gpu_small", requirements=["torch", "transformers"])
-def train_gpu_model(data):
-    import torch
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    # ... training logic on GPU ...
-    return model
-
-result = train_gpu_model(my_data)
-```
-
-For a complete hyperparameter search, see [examples/optuna_xgboost.py](examples/optuna_xgboost.py).
 
 ## Node Types
 
