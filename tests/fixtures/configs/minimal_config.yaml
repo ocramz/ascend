@@ -1,0 +1,7 @@
+# Minimal valid .ascend.yaml configuration
+username: testuser
+cluster_name: ascend-test
+resource_group: test-rg
+namespace: ascend-users-test
+storage_account: teststorage123
+container_registry: testacr.azurecr.io

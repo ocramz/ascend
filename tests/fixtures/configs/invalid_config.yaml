@@ -1,0 +1,4 @@
+# Invalid .ascend.yaml configuration for error testing
+# Missing required fields: cluster_name, resource_group, namespace
+username: testuser
+storage_account: minio

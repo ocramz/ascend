@@ -1,0 +1,40 @@
+# Default must stay within SUPPORTED_PYTHON_VERSIONS defined in
+# ascend/dependencies/analyzer.py.  Bump when a new CPython slim
+# image is published on Docker Hub and verified with cloudpickle.
+ARG PYTHON_VERSION=3.12
+FROM python:${PYTHON_VERSION}-slim
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create workspace
+WORKDIR /workspace
+
+# Copy runtime script
+COPY runner.py /opt/ascend/runner.py
+
+# Suppress "Running pip as root" warning — this container exists
+# solely to run Python; a venv would add complexity for no benefit.
+ENV PIP_ROOT_USER_ACTION=ignore
+
+# Install core runner dependencies + Azure fsspec backend
+# Future clouds: add gcsfs for GCP, s3fs for AWS
+ARG CLOUD_BACKEND=azure
+RUN pip install --no-cache-dir \
+    --trusted-host pypi.org \
+    --trusted-host files.pythonhosted.org \
+    cloudpickle>=3.0.0 \
+    fsspec>=2024.2 \
+    packaging>=23.0 && \
+    if [ "$CLOUD_BACKEND" = "azure" ]; then \
+        pip install --no-cache-dir \
+            --trusted-host pypi.org \
+            --trusted-host files.pythonhosted.org \
+            adlfs>=2024.4 azure-identity>=1.15.0; \
+    fi
+
+# Default entrypoint
+ENTRYPOINT ["python", "/opt/ascend/runner.py"]
